@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-
 ---
 Organizations:
     - &OrdererOrg
@@ -20,35 +19,65 @@ Organizations:
                 Type: Signature
                 Rule: "OR('OrdererMSP.admin')"
 
-    - &Org1
-        Name: Org1MSP
-        ID: Org1MSP
-        MSPDir: crypto-config/peerOrganizations/org1.example.com/msp
+    - &Producer
+        Name: ProducerMSP
+        ID: ProducerMSP
+        MSPDir: crypto-config/peerOrganizations/producer.example.com/msp
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('Org1MSP.admin', 'Org1MSP.peer', 'Org1MSP.client')"
+                Rule: "OR('ProducerMSP.admin', 'ProducerMSP.peer', 'ProducerMSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('Org1MSP.admin', 'Org1MSP.client')"
+                Rule: "OR('ProducerMSP.admin', 'ProducerMSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('Org1MSP.admin')"
+                Rule: "OR('ProducerMSP.admin')"
 
-    - &Org2
-        Name: Org2MSP
-        ID: Org2MSP
-        MSPDir: crypto-config/peerOrganizations/org2.example.com/msp
+    - &Manufacturer
+        Name: ManufacturerMSP
+        ID: ManufacturerMSP
+        MSPDir: crypto-config/peerOrganizations/manufacturer.example.com/msp
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('Org2MSP.admin', 'Org2MSP.peer', 'Org2MSP.client')"
+                Rule: "OR('ManufacturerMSP.admin', 'ManufacturerMSP.peer', 'ManufacturerMSP.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('Org2MSP.admin', 'Org2MSP.client')"
+                Rule: "OR('ManufacturerMSP.admin', 'ManufacturerMSP.client')"
             Admins:
                 Type: Signature
-                Rule: "OR('Org2MSP.admin')"
+                Rule: "OR('ManufacturerMSP.admin')"
+                
+    - &Deliverer
+        Name: DelivererMSP
+        ID: DelivererMSP
+        MSPDir: crypto-config/peerOrganizations/deliverer.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('DelivererMSP.admin', 'DelivererMSP.peer', 'DelivererMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('DelivererMSP.admin', 'DelivererMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('DelivererMSP.admin')"
+                
+    - &Retailer
+        Name: RetailerMSP
+        ID: RetailerMSP
+        MSPDir: crypto-config/peerOrganizations/retailer.example.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('RetailerMSP.admin', 'RetailerMSP.peer', 'RetailerMSP.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('RetailerMSP.admin', 'RetailerMSP.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('RetailerMSP.admin')"
 
 Capabilities:
     Channel: &ChannelCapabilities
@@ -126,7 +155,7 @@ Channel: &ChannelDefaults
 
 Profiles:
 
-    TwoOrgsOrdererGenesis:
+    SupplyOrdererGenesis:
         <<: *ChannelDefaults
         Orderer:
             <<: *OrdererDefaults
@@ -137,16 +166,19 @@ Profiles:
         Consortiums:
             SampleConsortium:
                 Organizations:
-                    - *Org1
-                    - *Org2
-    TwoOrgsChannel:
+                    - *Producer
+                    - *Manufacturer
+                    - *Deliverer
+                    - *Retailer
+    SupplyChannel:
         Consortium: SampleConsortium
         <<: *ChannelDefaults
         Application:
             <<: *ApplicationDefaults
             Organizations:
-                - *Org1
-                - *Org2
+                - *Producer
+                - *Manufacturer
+                - *Deliverer
+                - *Retailer
             Capabilities:
                 <<: *ApplicationCapabilities
-
